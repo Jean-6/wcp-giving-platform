@@ -4,7 +4,6 @@ body,html{
   font-family: arial,sans-serif;
 }
 
-
 /*Left section*/
 
 .logo-container{
@@ -22,14 +21,14 @@ body,html{
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 80vh;
 }
 
 
 /*Right section*/
 
 .light-black-border {
-  border: 1px solid rgba(0, 0, 0, 0.3); /* noir à 20% d'opacité */
+  border: 1px solid rgba(0, 0, 0, 0.3);
 }
 .right-section{
   background-color: #fff;
@@ -48,12 +47,6 @@ body,html{
 
 .payment-icons img:hover{
   transform: scale(1.1);
-}
-
-.form-section select,
-.form-section input,
-.form-section textarea{
-  margin-bottom: 1rem;
 }
 
 @media (max-width: 760px) {
