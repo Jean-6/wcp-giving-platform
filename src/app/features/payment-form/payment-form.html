@@ -1,0 +1,24 @@
+<!-- Modal -->
+<div #modalEl class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Paiement par carte</h5>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <div id="card-number-element"
+             class="form-control form-control-lg mb-3 rounded-0">
+        </div>
+        <div id="card-expiry-element"
+             class="form-control form-control-lg mb-3 rounded-0">
+
+        </div>
+        <div id="card-cvc-element"
+             class="form-control form-control-lg mb-3 rounded-0">
+        </div>
+        <button type="button" class="btn btn-danger w-100 mt-3 text-uppercase fw-bolder rounded-0" (click)="submit($event)" >Payer</button>
+      </div>
+    </div>
+  </div>
+</div>
