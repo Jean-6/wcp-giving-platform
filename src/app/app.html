@@ -10,6 +10,11 @@
 </head>
 
 <body>
+<!-- Loader -->
+<!-- Overlay de chargement fullscreen -->
+<app-loading-overlay *ngIf="isImageLoaded"></app-loading-overlay>
+
+<div *ngIf="!isImageLoaded">
 <nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark">
   <div class="container">
     <a class="navbar-brand text-uppercase" href="index.html">Winners Chapel Paris</a>
@@ -33,6 +38,9 @@
 <!-- End Header/Navigation -->
 
 
+
+
+
 <!-- Start Product Section -->
 <div class="container-fluid product-section ">
   <div class="row">
@@ -41,7 +49,7 @@
     <div class="col-md-6 left-section">
       <div class="d-flex align-items-center">
         <div class="me-3 logo-container" >
-          <img src="assets/images/lfc_logo.png" alt="logo" class=" w-100 h-100 object-fit-contain"/>
+          <img src="assets/images/lfc_logo.png" alt="logo" class=" w-100 h-100 object-fit-contain" (load)="onImageLoad()"/>
         </div>
         <div>
           <h5 class="fw-bolder text-uppercase fs-4">LIVING FAITH CHURCH WORLDWIDE INTERNATIONAL</h5>
@@ -50,15 +58,15 @@
       <h2 class="mt-2 text-uppercase">plateforme de don en ligne</h2>
       <h6 class="mt-5 text-uppercase">option des dons</h6>
       <div class="mb-3">
-        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder">carte bancaire</button>
-        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder">transfert bancaire</button>
+        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder rounded-0">carte bancaire</button>
+        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder rounded-0">transfert bancaire</button>
       </div>
 
       <h6 class="mt-5 text-uppercase">support et informations</h6>
       <div class="mb-3">
-        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder">support</button>
-        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder">assistance</button>
-        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder">mise a jour</button>
+        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder rounded-0">support</button>
+        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder rounded-0">assistance</button>
+        <button class="btn btn-outline-light text-uppercase me-2 fw-bolder rounded-0">mise a jour</button>
       </div>
     </div>
 
@@ -68,8 +76,8 @@
         <form>
           <div class="row ">
             <div class="col-md-6">
-              <label for="station" class="form-label fw-bolder">Station</label>
-              <select class="form-select form-select-lg light-black-border" id="station" required>
+              <label for="station" class="form-label fw-bolder mb-0">Station</label>
+              <select class="form-select form-select-lg light-black-border rounded-0" id="station" >
                 <option disabled selected></option>
                 <option value="EUR">Paris</option>
                 <option value="EUR">Nantes</option>
@@ -80,21 +88,21 @@
 
           <div class="row">
             <div class="col-md-6">
-              <label for="devise" class="form-label fw-bolder">Devise</label>
-              <select class="form-select form-select-lg light-black-border" id="devise" required>
-                <option value="EUR">EUR</option>
+              <label for="devise" class="form-label fw-bolder mb-0">Devise</label>
+              <select class="form-select form-select-lg light-black-border rounded-0" id="devise" >
+                <option value="EUR">Euro</option>
               </select>
             </div>
             <div class="col-md-6">
-              <label for="amount" class="form-label fw-bolder">Montant</label>
-              <input id="amount" type="text" class="form-control form-control-lg light-black-border" placeholder="" required/>
+              <label for="amount" class="form-label fw-bolder mb-0">Montant</label>
+              <input id="amount" type="text" class="form-control form-control-lg light-black-border rounded-0" placeholder=""/>
             </div>
           </div>
 
           <div class="row">
             <div class="col-md-6">
-              <label for="offering" class="form-label fw-bolder">Type d'offrande</label>
-              <select class="form-select form-select-lg light-black-border" id="offering" required>
+              <label for="offering" class="form-label fw-bolder mb-0">Type d'offrande</label>
+              <select class="form-select form-select-lg light-black-border rounded-0" id="offering">
                 <option disabled selected></option>
                 <option value="tithe">Dime</option>
                 <option value="offering">Offrande</option>
@@ -105,37 +113,42 @@
 
           <div class="row">
             <div class="col-md-6">
-              <label for="firstname" class="form-label fw-bolder">Nom</label>
-              <input id="firstname" type="text" class="form-control form-control-lg light-black-border" placeholder="" required>
+              <label for="firstname" class="form-label fw-bolder mb-0">Nom</label>
+              <input id="firstname" type="text" class="form-control form-control-lg light-black-border rounded-0" placeholder="">
             </div>
             <div class="col-md-6">
-              <label for="lastname" class="form-label fw-bolder">Prénom(s)</label>
-              <input id="lastname" type="text" class="form-control form-control-lg light-black-border" placeholder="" required>
+              <label for="lastname" class="form-label fw-bolder mb-0">Prénom(s)</label>
+              <input id="lastname" type="text" class="form-control form-control-lg light-black-border rounded-0" placeholder="" >
             </div>
           </div>
 
           <div class="row">
             <div class="col-md-6">
               <label for="email" class="form-label fw-bolder mb-0">Email</label>
-              <input id="email" type="email" class="form-control form-control-lg light-black-border" placeholder="">
+              <input id="email" type="email" class="form-control form-control-lg light-black-border rounded-0" placeholder="">
             </div>
             <div class="col-md-6">
-              <label for="phone" class="form-label fw-bolder">Téléphone</label>
-              <input id="phone" type="tel" class="form-control form-control-lg light-black-border" placeholder="">
+              <label for="phone" class="form-label fw-bolder mb-0">Téléphone</label>
+              <input id="phone" type="tel" class="form-control form-control-lg light-black-border rounded-0" placeholder="">
             </div>
           </div>
           <div class="row">
             <div class="col">
-              <label for="comment" class="form-label fw-bolder">Commentaire</label>
-              <textarea class="form-control form-control-lg light-black-border" rows="3" placeholder="" id="comment"></textarea>
+              <label for="comment" class="form-label fw-bolder mb-0">Commentaire</label>
+              <textarea class="form-control form-control-lg light-black-border rounded-0" rows="2" id="comment"></textarea>
             </div>
           </div>
-          <button type="submit" class="btn btn-danger w-100 mt-3 text-uppercase fw-bolder">envoyer</button>
+          <button type="button" class="btn btn-danger w-100 mt-3 text-uppercase fw-bolder rounded-0" (click)="openChild($event)">envoyer</button>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- -- Payment form -->
+
+<app-payment-form></app-payment-form>
 
 <!-- Start Footer Section -->
 <footer class="footer-section">
@@ -150,6 +163,7 @@
     </div>
   </div>
 </footer>
+</div>
 </body>
 </html>
 <router-outlet/>
