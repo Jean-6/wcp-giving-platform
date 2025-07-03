@@ -23,20 +23,6 @@ export class PaymentForm implements AfterViewInit,OnDestroy{
   stripe!: Stripe | null;
   elements!: StripeElements;
 
-  cardBrand: string | null = null;
-
-  cardBrandLogos: { [key: string]: string } = {
-    visa: 'assets/cards/visa-logo.png',
-    mastercard: 'assets/images/cards/mastercard.svg',
-    amex: 'assets/images/cards/amex.svg',
-    discover: 'assets/images/cards/discover.svg',
-    diners: 'assets/images/cards/diners.svg',
-    jcb: 'assets/images/cards/jcb.svg',
-    unionpay: 'assets/images/cards/unionpay.svg',
-    unknown: 'assets/images/cards/unknown.svg',
-  };
-
-
   cardNumber!: StripeCardNumberElement;
   cardExpiry!: StripeCardExpiryElement;
   cardCvc!:StripeCardCvcElement;
