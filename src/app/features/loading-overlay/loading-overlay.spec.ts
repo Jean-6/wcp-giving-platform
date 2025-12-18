@@ -10,7 +10,7 @@ describe('LoadingOverlay', () => {
     await TestBed.configureTestingModule({
       imports: [LoadingOverlay]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(LoadingOverlay);
     component = fixture.componentInstance;
