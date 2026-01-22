@@ -205,10 +205,9 @@
 
         <!-- Submit -->
         <button
-          class="w-full py-2 rounded-xl bg-red-600 text-white font-semibold text-l shadow-md
+          class="w-full py-2 rounded-xl bg-red-600 text-white  text-l shadow-md
            hover:bg-red-700 hover:shadow-lg transition-all active:scale-[0.98]"
-          type="submit"
-        >
+          type="submit">
           Envoyer
         </button>
 
@@ -220,7 +219,7 @@
   <!-- SLIDE PANEL -->
   <section *ngIf="selectedPanel" class="lg:w-6/12 w-full bg-white p-10 flex flex-col animate-slide-left shadow-xl">
     <!-- HEADER -->
-    <button (click)="closePanel()" class="self-end text-red-600 hover:text-gray-700 mb-1 uppercase font-semibold"> ✕ Fermer</button>
+    <button (click)="closePanel()" class="self-end text-red-600 hover:text-gray-700 mb-1 uppercase "> ✕ Fermer</button>
     <hr/>
     <!-- CONTENT -->
     <div class="p-6 overflow-y-auto flex-1">
@@ -298,7 +297,7 @@
               </div>
             </div>
             <!-- Submit -->
-            <button class="w-full py-2 mt-5 rounded-lg bg-red-600 text-white font-semibold " >
+            <button class="w-full py-2 mt-5 rounded-lg bg-red-600 text-white  " >
               Envoyer une demande
             </button>
           </div>
@@ -359,3 +358,5 @@
     </div>
   </section>
 </div>
+
+

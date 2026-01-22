@@ -1,15 +1,15 @@
 import { Routes } from '@angular/router';
+import {Donation} from './features/donation/donation';
 
 export const routes: Routes = [
-  {
-    path: 'payment-form',
-    loadComponent: ()=> import('./features/payment-form/payment-form')
-      .then(m => m.PaymentForm)
-  },
 
   {
-    //path: '',
-    //redirectTo: 'payment-form',
-    //pathMatch: 'full',
+    path: 'donation',
+    component: Donation
+  },
+  {
+    path: '',
+    redirectTo: 'donation',
+    pathMatch: 'full',
   }
 ];
