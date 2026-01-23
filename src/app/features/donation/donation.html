@@ -1,9 +1,9 @@
-<div class="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
+<div class="relative min-h-screen bg-gray-100 flex flex-col lg:flex-row">
   <!-- LEFT SECTION -->
   <section
     class="lg:w-6/12 w-full h-screen flex justify-center bg-cover bg-center relative text-white"
-    style="background-image: url('/assets/images/davido_1.jpg')">
-    <div class="absolute inset-0 bg-black/70"></div>
+    style="background-image: url('/assets/images/prayer-position.jpg')">
+    <div class="absolute inset-0 bg-black/65"></div>
     <div class="relative p-10 h-full flex flex-col justify-between">
       <!-- Logo / Title -->
       <div class="flex items-center gap-4">
@@ -22,27 +22,30 @@
       </div>
       <!-- Main Title -->
       <div>
-        <h2 class="text-3xl font-semibold leading-tight mb-8 uppercase">
-          Winners Chapel - Paris <br/> Online Giving Platform
-        </h2>
+        <div class="">
+          <h2 class="text-3xl font-semibold leading-tight uppercase">
+            Winners Chapel - Paris<br/> Plateforme de dons
+          </h2>
+        </div>
         <!-- Giving Options -->
-        <div class="space-y-9">
+        <div class="space-y-14">
           <h3 class="uppercase text-sm tracking-widest opacity-70 font-semibold ">
           </h3>
           <div class="">
             <h2 class="uppercase text-sm font-semibold py-1 tracking-wide">local</h2>
             <div class="flex gap-3">
               <button class="btn-outline uppercase border-gray-200 font-semibold">Carte bancaire</button>
-              <button class="btn-outline uppercase border-gray-200 font-semibold ">Virement bancaire</button>
+              <button class="btn-outline uppercase border-gray-200 font-semibold
+                             opacity-50 cursor-not-allowed pointer-events-none">Virement bancaire</button>
             </div>
           </div>
-          <div>
+          <!--<div>
             <h2 class="uppercase text-sm font-semibold py-1 tracking-wide">international</h2>
             <div class="flex gap-3">
               <button class="btn-outline uppercase border-gray-200 font-semibold">Carte bancaire</button>
               <button class="btn-outline uppercase border-gray-200 font-semibold">Virement bancaire</button>
             </div>
-          </div>
+          </div>-->
 
           <div>
             <h2 class="uppercase text-sm font-semibold py-1 tracking-wide">support et information</h2>
@@ -64,7 +67,7 @@
 
       <!-- Footer -->
       <div class="text-xs opacity-70">
-        © 2026 Living Faith Church - Paris
+        © 2026, Tous droits réservés, Winners Chapel - Paris
       </div>
 
     </div>
@@ -74,75 +77,73 @@
   <!-- RIGHT SECTION -->
   <section
     *ngIf="!selectedPanel"
-    class="lg:w-6/12 w-full bg-white p-10 flex ">
-    <div class="w-full max-w-md ml-14">
-      <!-- Payment Providers -->
-      <div class="flex flex-wrap gap-4">
-      </div>
-
-
+    class=" fixed inset-y-0 right-0 animate-slide-left bg-black/25 z-40 w-full lg:w-6/12 bg-gray-900/3 p-10 flex flex-col min-h-screen justify-center items-center "> <!-- -->
+    <div class="w-full">
+      <div class="flex flex-wrap gap-4"></div>
       <!-- Form -->
       <form
         [formGroup]="infoForm"
         (ngSubmit)="submit()"
-        class="space-y-6 my-8 max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+        class="space-y-4  w-full mx-auto bg-white p-8 shadow-sm border border-gray-100">
         <!-- Devise -->
+        <h2 class="font-bold text-sm">Informations personnelles</h2>
         <div class="w-40">
-          <label class="text-sm font-medium text-gray-800">Devise</label>
+          <label class="text-xs font-bold text-gray-800">Devise</label>
           <select
-            class="w-full px-4 py-2 mt-1 rounded-xl border border-gray-300 bg-white text-gray-900
+            class="w-full px-4 py-2 mt-1 border border-gray-300 bg-white text-gray-900
              focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all">
             <option>EUR</option>
           </select>
         </div>
 
-        <!-- Montant -->
-        <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-800">Montant</label>
-          <input
-            class="w-full px-4 py-2 rounded-xl border border-gray-300 text-gray-900
+        <!-- Montant + Offrande -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Montant -->
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-800">Montant</label>
+            <input
+              class="w-full px-4 py-2  border border-gray-300 text-gray-900
              focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
-            formControlName="amount"
-            type="number"
-            inputmode="numeric"
-            min="1"
-            placeholder=""/>
-          <div
-            *ngIf="infoForm.get('amount')?.invalid && infoForm.get('amount')?.touched"
-            class="text-red-500 text-xs"
-          >
-            Champ obligatoire
+              formControlName="amount"
+              type="number"
+              inputmode="numeric"
+              min="1"
+              placeholder=""/>
+            <div
+              *ngIf="infoForm.get('amount')?.invalid && infoForm.get('amount')?.touched"
+              class="text-red-500 text-xs">
+              Champ obligatoire
+            </div>
+          </div>
+
+          <!-- Offrande -->
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-800">Offrande</label>
+            <select
+              class="w-full px-4 py-2.5 border border-gray-300 bg-white text-gray-900
+             focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
+              formControlName="gift">
+              <option value=""></option>
+              <option>Dime</option>
+              <option>Offrande</option>
+              <option>Don</option>
+              <option>Sacrifice de Shiloh</option>
+              <option>Offrande prophetique</option>
+            </select>
+            <div
+              *ngIf="infoForm.get('gift')?.invalid && infoForm.get('gift')?.touched"
+              class="text-red-500 text-xs"
+            >
+              Champ obligatoire
+            </div>
           </div>
         </div>
-
-        <!-- Offrande -->
-        <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-800">Offrande</label>
-          <select
-            class="w-full px-4 py-2 rounded-xl border border-gray-300 bg-white text-gray-900
-             focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
-            formControlName="gift">
-            <option value=""></option>
-            <option>Dime</option>
-            <option>Offrande</option>
-            <option>Don</option>
-            <option>Sacrifice de Shiloh</option>
-            <option>Offrande prophetique</option>
-          </select>
-          <div
-            *ngIf="infoForm.get('gift')?.invalid && infoForm.get('gift')?.touched"
-            class="text-red-500 text-xs"
-          >
-            Champ obligatoire
-          </div>
-        </div>
-
         <!-- Prénoms + Nom -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-1">
-            <label class="text-sm font-medium text-gray-800">Prénoms</label>
+            <label class="text-xs font-bold text-gray-800">Prénoms</label>
             <input
-              class="w-full px-4 py-2 rounded-xl border border-gray-300 text-gray-900
+              class="w-full px-4 py-2 border border-gray-300 text-gray-900
                focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
               formControlName="firstname"
             />
@@ -155,69 +156,77 @@
           </div>
 
           <div class="space-y-1">
-            <label class="text-sm font-medium text-gray-800">Nom</label>
+            <label class="text-xs font-bold text-gray-800">Nom</label>
             <input
-              class="w-full px-4 py-2 rounded-xl border border-gray-300 text-gray-900
+              class="w-full px-4 py-2 border border-gray-300 text-gray-900
                focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
-              formControlName="lastname"
-            />
+              formControlName="lastname"/>
             <div
               *ngIf="infoForm.get('lastname')?.invalid && infoForm.get('lastname')?.touched"
+              class="text-red-500 text-xs">
+              Champ obligatoire
+            </div>
+          </div>
+        </div>
+
+        <!-- Email + Tel -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Email -->
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-800">Email</label>
+            <input
+              class="w-full px-4 py-2 border border-gray-300 text-gray-900
+             focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
+              type="email"
+              formControlName="email"
+            />
+            <div
+              *ngIf="infoForm.get('email')?.invalid && infoForm.get('email')?.touched"
+              class="text-red-500 text-xs"
+            >
+              Champ obligatoire
+            </div>
+          </div>
+
+          <!-- Téléphone -->
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-800">Téléphone</label>
+            <input
+              class="w-full px-4 py-2  border border-gray-300 text-gray-900
+             focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
+              formControlName="phone"
+            />
+            <div
+              *ngIf="infoForm.get('phone')?.invalid && infoForm.get('phone')?.touched"
               class="text-red-500 text-xs"
             >
               Champ obligatoire
             </div>
           </div>
         </div>
-
-        <!-- Email -->
-        <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-800">Email</label>
-          <input
-            class="w-full px-4 py-2 rounded-xl border border-gray-300 text-gray-900
-             focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
-            type="email"
-            formControlName="email"
-          />
-          <div
-            *ngIf="infoForm.get('email')?.invalid && infoForm.get('email')?.touched"
-            class="text-red-500 text-xs"
-          >
-            Champ obligatoire
-          </div>
-        </div>
-
-        <!-- Téléphone -->
-        <div class="space-y-1">
-          <label class="text-sm font-medium text-gray-800">Téléphone</label>
-          <input
-            class="w-full px-4 py-2 rounded-xl border border-gray-300 text-gray-900
-             focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
-            formControlName="phone"
-          />
-          <div
-            *ngIf="infoForm.get('phone')?.invalid && infoForm.get('phone')?.touched"
-            class="text-red-500 text-xs"
-          >
-            Champ obligatoire
-          </div>
-        </div>
-
         <!-- Submit -->
         <button
-          class="w-full py-2 rounded-xl bg-red-600 text-white  text-l shadow-md
+          class="w-full py-2 bg-red-600 text-white shadow-md
            hover:bg-red-700 hover:shadow-lg transition-all active:scale-[0.98]"
           type="submit">
           Envoyer
         </button>
-
       </form>
-
     </div>
+
+    <footer class="text-center text-gray-500 py-4">
+      <ul class="flex justify-center gap-6 text-xs text-gray-600 opacity-70">
+        <li><a href="#" class="hover:text-gray-900">Instructions</a></li>
+        <li><a href="#" class="hover:text-gray-900">Licence</a></li>
+        <li><a href="#" class="hover:text-gray-900">Termes d'utilisation</a></li>
+        <li><a href="#" class="hover:text-gray-900">Privacy</a></li>
+      </ul>
+
+    </footer>
   </section>
 
   <!-- SLIDE PANEL -->
-  <section *ngIf="selectedPanel" class="lg:w-6/12 w-full bg-white p-10 flex flex-col animate-slide-left shadow-xl">
+  <section *ngIf="selectedPanel" class="fixed inset-y-0 right-0 lg:w-6/12 w-full bg-white p-10 flex flex-col shadow-xl translate-x-full animate-slide-left will-change-transform z-30">
     <!-- HEADER -->
     <button (click)="closePanel()" class="self-end text-red-600 hover:text-gray-700 mb-1 uppercase "> ✕ Fermer</button>
     <hr/>
@@ -274,30 +283,30 @@
       <div *ngIf="selectedPanel === 'facture'" class="space-y-6">
         <h2 class="text-2xl font-bold text-gray-800">Obtenir un rapport</h2>
           <div class="max-w-4xl bg-white rounded-2xl shadow-sm border border-gray-100 p-8 ">
-            <p class="text-gray-700 leading-relaxed">
+            <p class="text-gray-700 leading-relaxed mb-3">
               Veuillez fournir l’adresse e‑mail utilisée sur la plateforme.
               Le rapport demandé sera envoyé à cette même adresse.
             </p>
 
             <!-- Email -->
-            <div class="space-y-2">
-              <label class="text-sm font-medium text-gray-800">Messagerie électronique</label>
-              <input type="email" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" placeholder="exemple@domaine.com" />
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-gray-800">Messagerie électronique</label>
+              <input type="email" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" placeholder="exemple@domaine.com" />
           </div>
 
             <!-- Dates -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-2">
-                <label class="text-sm font-medium text-gray-800">Date de début</label>
-                <input type="date" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />
+              <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-800">Date de début</label>
+                <input type="date" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />
               </div>
-              <div class="space-y-2">
-                <label class="text-sm font-medium text-gray-800">Date de fin</label>
-                <input type="date" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />
+              <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-800">Date de fin</label>
+                <input type="date" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />
               </div>
             </div>
             <!-- Submit -->
-            <button class="w-full py-2 mt-5 rounded-lg bg-red-600 text-white  " >
+            <button class="w-full py-2 mt-5  bg-red-600 text-white  " >
               Envoyer une demande
             </button>
           </div>

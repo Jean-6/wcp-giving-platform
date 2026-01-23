@@ -4,7 +4,6 @@ module.exports = {
     "./src/**/*.{html,ts}"
   ],
   theme: {
-    extend: {
       extend: {
         keyframes:{
           slideLeft:{
@@ -13,10 +12,9 @@ module.exports = {
           }
         },
         animation: {
-          'slide-left': 'slideLeft 0.1s ease-out',
+          'slide-left': 'slideLeft 0.35s ease-out forwards',
         }
       },
-    },
   },
   plugins: [],
 };
