@@ -1,13 +1,18 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {NgIf} from '@angular/common';
-import {StripeService} from 'ngx-stripe';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MyStripeService} from './service/my-stripe-service';
+import {AlertService} from '../../core/services/alert-service';
+import {Dialog} from 'primeng/dialog';
+import {ProgressSpinner} from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-donation',
   imports: [
     NgIf,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    Dialog,
+    ProgressSpinner,
   ],
   templateUrl: './donation.html',
   styleUrl: './donation.css',
@@ -16,47 +21,35 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 export class Donation {
 
   infoForm!: FormGroup;
+  selectedPanel: 'support' | 'facture' | 'update' | 'stripe' | null = null;
+  showStripeDialog = false;
+  private cardMounted = false;
+  isLoading = false;
 
-  selectedPanel: 'support' | 'facture' | 'update' | null = null;
+  @ViewChild('cardNumberEl') cardNumberEl!: ElementRef;
+  @ViewChild('cardExpiryEl') cardExpiryEl!: ElementRef;
+  @ViewChild('cardCvcEl') cardCvcEl!: ElementRef;
 
-  constructor(private fb: FormBuilder) {
+  /*@ViewChild('cardElement')
+  set card(el: ElementRef | undefined) {
+    if (el && !this.cardMounted) {
+      this.cardMounted = true;
+
+      this.stripeService.init$().subscribe(()=>{
+        this.stripeService.mountCard(el.nativeElement);
+      });
+    }
+  }*/
+
+
+  constructor(private fb: FormBuilder, private stripeService: MyStripeService, private alert: AlertService) {
     this.infoForm = this.fb.group({
-      amount: ['',
-        [
-          Validators.required,
-          Validators.min(1),
-          Validators.pattern(/^[0-9]+$/)
-        ]
-      ],
+      amount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[0-9]+$/)]],
       gift: ['', Validators.required],
-      firstname: ['',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/)
-        ]
-      ],
-      lastname: [
-        '', [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/)
-        ]
-      ],
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.email
-        ]
-      ],
-      phone: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(/^[0-9]{8,15}$/) // Ajuste selon ton pays ]
-       ]
-      ]
+      firstname: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/)]],
+      lastname: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)  ]] // Selon pays
     });
   }
 
@@ -68,13 +61,59 @@ export class Donation {
     this.selectedPanel = null;
   }
 
-
   submit() {
+
+    this.isLoading = true;
+
     if (this.infoForm.invalid) {
       this.infoForm.markAllAsTouched();
       return;
     }
     console.log('Formulaire valide :', this.infoForm.value);
+    this.cardMounted = false;
+    this.showStripeDialog = true;
+
+    this.isLoading = false;
 
   }
+
+  /**
+   * Called by p-dialog (onShow)
+   */
+
+  onStripeDialogOpen() {
+    if (this.cardMounted) return;
+
+    this.cardMounted = true;
+    this.isLoading = true;
+
+    setTimeout(()=>{
+      this.stripeService.init$().subscribe(() => {
+        this.stripeService.mountAll(
+          this.cardNumberEl.nativeElement,
+          this.cardExpiryEl.nativeElement,
+          this.cardCvcEl.nativeElement
+        );
+        this.isLoading = false
+      });
+    },250)
+
+  }
+
+
+  /**
+   * Called by p-dialog (onHide)
+   */
+
+  closeStripeDialog() {
+    this.showStripeDialog = false;
+    this.cardMounted = false;
+    this.stripeService.unmountAll();
+  }
+
+  pay(){
+
+  }
+
+
 }
