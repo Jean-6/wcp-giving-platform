@@ -30,17 +30,6 @@ export class Donation {
   @ViewChild('cardExpiryEl') cardExpiryEl!: ElementRef;
   @ViewChild('cardCvcEl') cardCvcEl!: ElementRef;
 
-  /*@ViewChild('cardElement')
-  set card(el: ElementRef | undefined) {
-    if (el && !this.cardMounted) {
-      this.cardMounted = true;
-
-      this.stripeService.init$().subscribe(()=>{
-        this.stripeService.mountCard(el.nativeElement);
-      });
-    }
-  }*/
-
 
   constructor(private fb: FormBuilder, private stripeService: MyStripeService, private alert: AlertService) {
     this.infoForm = this.fb.group({
@@ -82,9 +71,7 @@ export class Donation {
    */
 
   onStripeDialogOpen() {
-    if (this.cardMounted) return;
 
-    this.cardMounted = true;
     this.isLoading = true;
 
     setTimeout(()=>{
@@ -96,24 +83,21 @@ export class Donation {
         );
         this.isLoading = false
       });
-    },250)
-
+    })
   }
-
 
   /**
    * Called by p-dialog (onHide)
    */
 
   closeStripeDialog() {
-    this.showStripeDialog = false;
-    this.cardMounted = false;
+    this.showStripeDialog = false
     this.stripeService.unmountAll();
+    this.isLoading = false
   }
 
   pay(){
 
   }
-
 
 }

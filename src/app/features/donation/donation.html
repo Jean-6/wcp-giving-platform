@@ -381,124 +381,95 @@
 
   <p-dialog
     [(visible)]="showStripeDialog"
+    appendTo="body"
     [modal]="true"
-    [dismissableMask]="true"
+    [closable]="false"
+    [showHeader]="false"
     (onShow)="onStripeDialogOpen()"
-    (onHide) = "closeStripeDialog()"
-    header="Paiement sécurisé"
-    [style] = "{ width: '32rem'}">
+    (onHide)="closeStripeDialog()"
+    [style]="{ width: '32rem' }"
+    contentStyleClass="p-0">
 
-
-
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
+    <!-- HEADER -->
+    <div class="flex justify-between items-center bg-white p-4 shadow border border-gray-200">
       <h2 class="text-xl font-semibold text-gray-900">
         Paiement sécurisé
       </h2>
+      <button
+        type="button"
+        (click)="closeStripeDialog()"
+        class="text-gray-400 hover:text-gray-600 transition text-xl">
+        ✕
+      </button>
     </div>
 
-    <!-- Loader -->
-    <div *ngIf="isLoading" class="flex flex-col items-center py-10">
-      <div class="animate-spin rounded-full h-10 w-10 border-4 border-red-600 border-t-transparent">
-      </div>
-      <p class="mt-4 text-gray-600 text-sm">Chargement du module de paiement…</p>
+    <!-- LOADER (DOM TOUJOURS PRÉSENT) -->
+    <div
+      *ngIf="isLoading"
+      class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white">
+
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-red-600 border-t-transparent"></div>
+      <p class="mt-4 text-gray-600 text-sm">
+        Chargement du module de paiement…
+      </p>
     </div>
 
-    <!-- Card container-->
-    <div class="bg-white border border-gray-200  shadow-sm p-5" *ngIf="!isLoading">
-      <!--<label class="block text-sm font-medium text-gray-700 mb-2"> Informations de paiement </label>-->
-      <h2 class="font-bold text-sm">Informations de paiement</h2>
+    <!-- STRIPE FORM (JAMAIS DÉTRUIT) -->
+    <div
+      class="bg-white border border-gray-200 shadow-sm p-5 transition-opacity"
+      [class.opacity-0]="isLoading"
+      [class.opacity-100]="!isLoading"
+      [class.pointer-events-none]="isLoading">
 
-      <!-- Numéro de carte -->
+      <h3 class="font-bold text-sm mb-4">
+        Informations de paiement
+      </h3>
+
+      <!-- CARD NUMBER -->
       <label class="text-xs text-gray-600">Numéro de carte</label>
-      <div #cardNumberEl class="bg-gray-50 border border-gray-300 px-4 py-3 rounded focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition mb-3">
+      <div
+        #cardNumberEl
+        class="h-[42px] bg-gray-50 border border-gray-300 px-4 py-3 rounded
+             focus-within:ring-2 focus-within:ring-blue-500
+             focus-within:border-blue-500 transition mb-3">
       </div>
 
-      <!-- Expiration -->
+      <!-- EXPIRY -->
       <label class="text-xs text-gray-600">Date d’expiration</label>
-      <div #cardExpiryEl class="bg-gray-50 border border-gray-300 px-4 py-3 rounded focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition mb-3">
+      <div
+        #cardExpiryEl
+        class="h-[42px] bg-gray-50 border border-gray-300 px-4 py-3 rounded
+             focus-within:ring-2 focus-within:ring-blue-500
+             focus-within:border-blue-500 transition mb-3">
       </div>
 
-      <!-- CVC --> <label class="text-xs text-gray-600">CVC</label>
-      <div #cardCvcEl class="bg-gray-50 border border-gray-300 px-4 py-3 rounded focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition mb-4">
+      <!-- CVC -->
+      <label class="text-xs text-gray-600">CVC</label>
+      <div
+        #cardCvcEl
+        class="h-[42px] bg-gray-50 border border-gray-300 px-4 py-3 rounded
+             focus-within:ring-2 focus-within:ring-blue-500
+             focus-within:border-blue-500 transition mb-4">
       </div>
 
-      <!-- Error message -->
-      <!--<p *ngIf="cardError" class="text-red-600 text-sm mt-2"> {{ cardError }} </p>-->
       <!-- CTA -->
-      <button (click)="pay()"
-              class="w-full py-2 bg-red-600 text-white shadow-md
-               hover:bg-red-700 hover:shadow-lg transition-all active:scale-[0.98] mt-3" >
+      <button
+        type="button"
+        (click)="pay()"
+        class="w-full py-2 bg-red-600 text-white shadow-md
+             hover:bg-red-700 hover:shadow-lg
+             transition-all active:scale-[0.98] mt-3">
         Payer maintenant
       </button>
 
-      <!-- Footer -->
-      <p class=" text-xs text-center text-gray-500">
+      <!-- FOOTER -->
+      <p class="text-xs text-center text-gray-500 mt-4">
         Paiement 100% sécurisé. Aucune donnée bancaire n'est stockée.
       </p>
     </div>
+
   </p-dialog>
 
-  <!--
-  <div class="card flex justify-center">
-    <p-dialog header="Edit Profile" [modal]="true" [(visible)]="showStripeDialog" [style]="{ width: '25rem' }">
-      <span class="p-text-secondary block mb-8">Update your information.</span>
-      <div class="flex items-center gap-4 mb-4">
-        <label for="username" class="font-semibold w-24">Username</label>
-        <input pInputText id="username" class="flex-auto" autocomplete="off" />
-      </div>
-      <div class="flex items-center gap-4 mb-8">
-        <label for="email" class="font-semibold w-24">Email</label>
-        <input pInputText id="email" class="flex-auto" autocomplete="off" />
-      </div>
-      <div class="flex justify-end gap-2">
-      </div>
-    </p-dialog>
-  </div>-->
-  <!--
-  <div *ngIf="showStripeDialog"
-       class="fixed inset-0 z-50 flex items-center justify-center">
 
-    -- Overlay --
-    <div class="absolute inset-0 bg-black/50"
-         (click)="closeStripeDialog()"></div>
-
-    -- Dialog --
-    <div class="relative bg-white w-full max-w-md mx-4 rounded-xl shadow-xl p-6 animate-scale-in">
-
-      -- Header --
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-gray-800">
-          Paiement sécurisé
-        </h2>
-        <button
-          (click)="closeStripeDialog()"
-          class="text-gray-400 hover:text-gray-700 text-xl">
-          ✕
-        </button>
-      </div>
-
-      -- Info --
-      <p class="text-sm text-gray-600 mb-4">
-        Montant à payer :
-        <span class="font-semibold">
-        {{ infoForm.value.amount }} €
-      </span>
-      </p>
-
-      -- Stripe Card --
-      <div class="border rounded-lg p-3 bg-gray-50">
-        <div #cardElement class="p-2 bg-white rounded-md"></div>
-      </div>
-
-      -- Pay button --
-      <button
-        type="button"
-        class="w-full mt-5 py-3 bg-green-600 text-white rounded-lg
-             hover:bg-green-700 transition-all">
-        Payer
-      </button>
-    </div>
-  </div>-->
 </div>
 
