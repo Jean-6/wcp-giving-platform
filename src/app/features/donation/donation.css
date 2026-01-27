@@ -9,3 +9,8 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+
+.my-overlay {
+  @apply backdrop-blur-sm bg-black bg-opacity-40;
+}

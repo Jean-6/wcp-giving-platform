@@ -369,10 +369,7 @@
     </div>
   </section>
 
-
   <!-- STRIPE DIALOG -->
-
-
 
   <div *ngIf="isLoading"  class="card flex justify-center">
     <p-progress-spinner ariaLabel="loading" />
@@ -385,6 +382,8 @@
     [modal]="true"
     [closable]="false"
     [showHeader]="false"
+    maskStyleClass="maskStyleClass"
+    [maskStyle]="{ background: 'rgba(0,0,0,0.5)' }"
     (onShow)="onStripeDialogOpen()"
     (onHide)="closeStripeDialog()"
     [style]="{ width: '32rem' }"
