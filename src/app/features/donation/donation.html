@@ -102,7 +102,7 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-gray-800">Montant</label>
             <input
-              class="w-full px-4 py-2  border border-gray-300 text-gray-900
+              class="w-full px-4 py-1.5  border border-gray-300 text-gray-900
              focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
               formControlName="amount"
               type="number"
@@ -120,9 +120,9 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-gray-800">Offrande</label>
             <select
-              class="w-full px-4 py-2.5 border border-gray-300 bg-white text-gray-900
+              class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-900
              focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
-              formControlName="gift">
+              formControlName="reason">
               <option value=""></option>
               <option>Dime</option>
               <option>Offrande</option>
@@ -131,9 +131,8 @@
               <option>Offrande prophetique</option>
             </select>
             <div
-              *ngIf="infoForm.get('gift')?.invalid && infoForm.get('gift')?.touched"
-              class="text-red-500 text-xs"
-            >
+              *ngIf="infoForm.get('reason')?.invalid && infoForm.get('reason')?.touched"
+              class="text-red-500 text-xs">
               Champ obligatoire
             </div>
           </div>
@@ -143,14 +142,13 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-gray-800">Prénoms</label>
             <input
-              class="w-full px-4 py-2 border border-gray-300 text-gray-900
+              class="w-full px-4 py-1.5 border border-gray-300 text-gray-900
                focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
               formControlName="firstname"
             />
             <div
               *ngIf="infoForm.get('firstname')?.invalid && infoForm.get('firstname')?.touched"
-              class="text-red-500 text-xs"
-            >
+              class="text-red-500 text-xs">
               Champ obligatoire
             </div>
           </div>
@@ -158,7 +156,7 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-gray-800">Nom</label>
             <input
-              class="w-full px-4 py-2 border border-gray-300 text-gray-900
+              class="w-full px-4 py-1.5 border border-gray-300 text-gray-900
                focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
               formControlName="lastname"/>
             <div
@@ -175,7 +173,7 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-gray-800">Email</label>
             <input
-              class="w-full px-4 py-2 border border-gray-300 text-gray-900
+              class="w-full px-4 py-1.5 border border-gray-300 text-gray-900
              focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
               type="email"
               formControlName="email"
@@ -192,7 +190,7 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-gray-800">Téléphone</label>
             <input
-              class="w-full px-4 py-2  border border-gray-300 text-gray-900
+              class="w-full px-4 py-1.5  border border-gray-300 text-gray-900
              focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
               formControlName="phone"
             />
@@ -202,6 +200,20 @@
             >
               Champ obligatoire
             </div>
+          </div>
+        </div>
+
+        <div class="">
+          <label class="text-xs font-bold text-gray-800">Adresse</label>
+          <input
+            #addressInput
+            class="w-full px-4 py-1.5 border border-gray-300 text-gray-900
+               focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all"
+            formControlName="address"/>
+          <div
+            *ngIf="infoForm.get('address')?.invalid && infoForm.get('address')?.touched"
+            class="text-red-500 text-xs">
+            Champ obligatoire
           </div>
         </div>
         <!-- Submit -->
@@ -371,87 +383,83 @@
 
   <!-- STRIPE DIALOG -->
 
+<!--
   <div *ngIf="isLoading"  class="card flex justify-center">
     <p-progress-spinner ariaLabel="loading" />
-  </div>
+  </div>-->
 
 
   <p-dialog
+    class="square-dialog"
     [(visible)]="showStripeDialog"
     appendTo="body"
     [modal]="true"
-    [closable]="false"
-    [showHeader]="false"
+    [closable]="true"
+    header="Paiment sécurié"
     maskStyleClass="maskStyleClass"
     [maskStyle]="{ background: 'rgba(0,0,0,0.5)' }"
     (onShow)="onStripeDialogOpen()"
     (onHide)="closeStripeDialog()"
-    [style]="{ width: '32rem' }"
-    contentStyleClass="p-0">
+    [style]="{ width: '30rem' }">
 
-    <!-- HEADER -->
-    <div class="flex justify-between items-center bg-white p-4 shadow border border-gray-200">
-      <h2 class="text-xl font-semibold text-gray-900">
-        Paiement sécurisé
-      </h2>
-      <button
-        type="button"
-        (click)="closeStripeDialog()"
-        class="text-gray-400 hover:text-gray-600 transition text-xl">
-        ✕
-      </button>
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="flex flex-col items-center py-10">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-red-600 border-t-transparent">
+      </div>
+      <p class="mt-4 text-gray-600 text-sm">Chargement du module de paiement…</p>
     </div>
 
-    <!-- LOADER (DOM TOUJOURS PRÉSENT) -->
-    <div
-      *ngIf="isLoading"
-      class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white">
-
-      <div class="animate-spin rounded-full h-10 w-10 border-4 border-red-600 border-t-transparent"></div>
-      <p class="mt-4 text-gray-600 text-sm">
-        Chargement du module de paiement…
-      </p>
-    </div>
-
-    <!-- STRIPE FORM (JAMAIS DÉTRUIT) -->
-    <div
-      class="bg-white border border-gray-200 shadow-sm p-5 transition-opacity"
-      [class.opacity-0]="isLoading"
-      [class.opacity-100]="!isLoading"
-      [class.pointer-events-none]="isLoading">
-
-      <h3 class="font-bold text-sm mb-4">
-        Informations de paiement
-      </h3>
-
+    <!-- CONTAINER -->
+    <div *ngIf="!isLoading" class="bg-white p-5">
+      <!-- TITLE -->
+      <h2 class="font-bold text-sm mb-2">Informations de paiement</h2>
       <!-- CARD NUMBER -->
-      <label class="text-xs text-gray-600">Numéro de carte</label>
+      <label class="block text-xs text-gray-600 mb-1">
+        Numéro de carte
+      </label>
+
       <div
-        #cardNumberEl
-        class="h-[42px] bg-gray-50 border border-gray-300 px-4 py-3 rounded
+        class="h-[42px] bg-gray-50 border border-gray-300 rounded
+             px-4 py-3 mb-4
              focus-within:ring-2 focus-within:ring-blue-500
-             focus-within:border-blue-500 transition mb-3">
+             focus-within:border-blue-500 transition">
+        <div #cardNumberEl class="h-full"></div>
       </div>
 
-      <!-- EXPIRY -->
-      <label class="text-xs text-gray-600">Date d’expiration</label>
-      <div
-        #cardExpiryEl
-        class="h-[42px] bg-gray-50 border border-gray-300 px-4 py-3 rounded
-             focus-within:ring-2 focus-within:ring-blue-500
-             focus-within:border-blue-500 transition mb-3">
-      </div>
+      <!-- EXPIRY + CVC -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
 
-      <!-- CVC -->
-      <label class="text-xs text-gray-600">CVC</label>
-      <div
-        #cardCvcEl
-        class="h-[42px] bg-gray-50 border border-gray-300 px-4 py-3 rounded
-             focus-within:ring-2 focus-within:ring-blue-500
-             focus-within:border-blue-500 transition mb-4">
-      </div>
+        <!-- EXPIRY -->
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">
+            Date d’expiration
+          </label>
 
-      <!-- CTA -->
+          <div
+            class="h-[42px] bg-gray-50 border border-gray-300 rounded
+                 px-4 py-3
+                 focus-within:ring-2 focus-within:ring-blue-500
+                 focus-within:border-blue-500 transition">
+            <div #cardExpiryEl class="h-full"></div>
+          </div>
+        </div>
+
+        <!-- CVC -->
+        <div>
+          <label class="block text-xs text-gray-600 mb-1">
+            CVC
+          </label>
+
+          <div
+            class="h-[42px] bg-gray-50 border border-gray-300 rounded
+                 px-4 py-3
+                 focus-within:ring-2 focus-within:ring-blue-500
+                 focus-within:border-blue-500 transition">
+            <div #cardCvcEl class="h-full"></div>
+          </div>
+        </div>
+
+      </div>
       <button
         type="button"
         (click)="pay()"
@@ -460,8 +468,6 @@
              transition-all active:scale-[0.98] mt-3">
         Payer maintenant
       </button>
-
-      <!-- FOOTER -->
       <p class="text-xs text-center text-gray-500 mt-4">
         Paiement 100% sécurisé. Aucune donnée bancaire n'est stockée.
       </p>
