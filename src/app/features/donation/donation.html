@@ -301,27 +301,46 @@
               Le rapport demandé sera envoyé à cette même adresse.
             </p>
 
-            <!-- Email -->
-            <div class="space-y-1">
-              <label class="text-xs font-bold text-gray-800">Messagerie électronique</label>
-              <input type="email" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" placeholder="exemple@domaine.com" />
-          </div>
 
-            <!-- Dates -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form
+              [formGroup]="reportForm"
+              (ngSubmit)="submitReportForm()">
+              <!-- Email -->
               <div class="space-y-1">
-                <label class="text-xs font-bold text-gray-800">Date de début</label>
-                <input type="date" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />
+                <label class="text-xs font-bold text-gray-800">Messagerie électronique</label>
+                <input
+                  type="email"
+                  formControlName="email"
+                       class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" placeholder=""/>
               </div>
-              <div class="space-y-1">
-                <label class="text-xs font-bold text-gray-800">Date de fin</label>
-                <input type="date" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />
+
+              <!-- Dates -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <div>  <label class="text-xs font-bold text-gray-800">Date de début</label></div>
+                  <!--<input type="date" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />-->
+                  <p-datePicker
+                    formControlName="start"
+                    fluid  class="w-full"
+                  />
+                </div>
+                <div class="space-y-1">
+                  <div> <label class="text-xs font-bold text-gray-800">Date de fin</label></div>
+                  <!--<input type="date" class="w-full px-4 py-2 border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all text-gray-900" />-->
+                  <p-datePicker
+                    formControlName="end"
+                    fluid class="w-full"  />
+                </div>
               </div>
-            </div>
-            <!-- Submit -->
-            <button class="w-full py-2 mt-5  bg-red-600 text-white  " >
-              Envoyer une demande
-            </button>
+              <!-- Submit -->
+              <button class="w-full py-2 mt-5  bg-red-600 text-white  " >
+                Envoyer une demande
+              </button>
+
+            </form>
+
+
+
           </div>
       </div>
 
@@ -394,23 +413,25 @@
     [(visible)]="showStripeDialog"
     appendTo="body"
     [modal]="true"
-    [closable]="true"
+    [closable]="!isLoading"
+    [dismissableMask]="!isLoading"
     header="Paiment sécurié"
     maskStyleClass="maskStyleClass"
     [maskStyle]="{ background: 'rgba(0,0,0,0.5)' }"
     (onShow)="onStripeDialogOpen()"
-    (onHide)="closeStripeDialog()"
+    (onHide)="onStripeDialogHide()"
     [style]="{ width: '30rem' }">
 
     <!-- Loader -->
-    <div *ngIf="isLoading" class="flex flex-col items-center py-10">
-      <div class="animate-spin rounded-full h-10 w-10 border-4 border-red-600 border-t-transparent">
-      </div>
-      <p class="mt-4 text-gray-600 text-sm">Chargement du module de paiement…</p>
+    <div
+      *ngIf="isLoading"
+      class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/70">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-red-600 border-t-transparent"></div>
+      <p class="mt-4 text-gray-600 text-sm">Paiement en cours…</p>
     </div>
 
     <!-- CONTAINER -->
-    <div *ngIf="!isLoading" class="bg-white p-5">
+    <div class="bg-white p-5" [class.opacity-50]="isLoading">
       <!-- TITLE -->
       <h2 class="font-bold text-sm mb-2">Informations de paiement</h2>
       <!-- CARD NUMBER -->
@@ -463,10 +484,11 @@
       <button
         type="button"
         (click)="pay()"
+        [disabled]="isLoading"
         class="w-full py-2 bg-red-600 text-white shadow-md
              hover:bg-red-700 hover:shadow-lg
              transition-all active:scale-[0.98] mt-3">
-        Payer maintenant
+        {{isLoading ? 'Paiement en cours...' : 'Payer maintenant'}}
       </button>
       <p class="text-xs text-center text-gray-500 mt-4">
         Paiement 100% sécurisé. Aucune donnée bancaire n'est stockée.

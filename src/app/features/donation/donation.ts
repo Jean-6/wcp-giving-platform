@@ -1,12 +1,13 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { Component, ElementRef, ViewChild} from '@angular/core';
 import {NgIf} from '@angular/common';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MyStripeService} from './service/my-stripe-service';
 import {AlertService} from '../../core/services/alert-service';
 import {Dialog} from 'primeng/dialog';
 import {PaymentService} from '../../core/services/payment-service';
 import {PaymentRequest} from '../../core/dtos/PaymentRequest';
 import {GoogleMapsLoaderService} from '../../core/services/google-maps-loader-service';
+import {DatePicker} from 'primeng/datepicker';
 
 declare const google: any;
 
@@ -16,7 +17,8 @@ declare const google: any;
     NgIf,
     ReactiveFormsModule,
     Dialog,
-    //ProgressSpinner,
+    FormsModule,
+    DatePicker,
   ],
   templateUrl: './donation.html',
   styleUrl: './donation.css',
@@ -29,6 +31,9 @@ export class Donation {
   showStripeDialog = false;
   private cardMounted = false;
   isLoading = false;
+  start: any;
+  end: any;
+  reportForm!: FormGroup;
 
   @ViewChild('cardNumberEl') cardNumberEl!: ElementRef;
   @ViewChild('cardExpiryEl') cardExpiryEl!: ElementRef;
@@ -50,13 +55,17 @@ export class Donation {
       phone: ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]], // Selon pays
       address: ['', [Validators.required]]
     });
+
+    this.reportForm = this.fb.group({
+      start:[],
+      end:[]
+    })
   }
 
 
   @ViewChild('addressInput')
   set address(el: ElementRef<HTMLInputElement> | undefined) {
     if (!el) return;
-
 
     this.googleMapsLoader.load().then(() => {
       const autocomplete = new google.maps.places.Autocomplete(
@@ -73,7 +82,6 @@ export class Donation {
 
         this.infoForm.patchValue({address: place.formatted_address});
 
-        console.log('Adresse Google:', place);
       });
     });
   }
@@ -109,8 +117,6 @@ export class Donation {
   onStripeDialogOpen() {
 
     this.isLoading = true;
-
-    setTimeout(() => {
       this.stripeService.init$().subscribe(() => {
         this.stripeService.mountAll(
           this.cardNumberEl.nativeElement,
@@ -119,7 +125,6 @@ export class Donation {
         );
         this.isLoading = false
       });
-    })
   }
 
   /**
@@ -128,61 +133,70 @@ export class Donation {
 
   closeStripeDialog() {
     this.showStripeDialog = false
-    this.stripeService.unmountAll();
     this.isLoading = false
   }
 
+  onStripeDialogHide() {
+    this.stripeService.unmountAll();
+  }
+
+
   pay() {
 
-    this.isLoading = true
+    if (this.isLoading) return;
+    this.isLoading = true;
 
-    console.log(this.infoForm.value)
+    const amount = this.infoForm.value.amount * 100;
+    const adressParsed = this.googleMapsLoader.parseAdress(this.infoForm.value.address)
 
-    const amount = this.infoForm.value.amount * 100
+    const payload: PaymentRequest = {
+      clientSecret: undefined,
+      amount: amount,
+      currency: 'eur',
+      reason: this.infoForm.value.reason,
+      billingDetails: {
+        firstname: this.infoForm.value.firstname,
+        lastname: this.infoForm.value.lastname,
+        email: this.infoForm.value.email,
+        phone: this.infoForm.value.phone,
+        address: adressParsed
+      }
+    };
 
-
-    this.paymentService.createIntent(amount)
+    // Sending backend
+    this.paymentService.createPayment(payload)
       .subscribe({
-        next: ({clientSecret}) => {
+        next: ({ clientSecret }) => {
 
-          const payload: PaymentRequest = {
-            clientSecret: clientSecret,
-            amount: amount,
-            currency: 'eur',
-            reason: this.infoForm.value.reason,
-            billingDetails: {
-              firstname: this.infoForm.value.firstname,
-              lastname: this.infoForm.value.lastname,
-              email: this.infoForm.value.email,
-              phone: this.infoForm.value.phone,
-              address: this.infoForm.value.address
-            }
-          };
+          payload.clientSecret = clientSecret;
 
+          // Stripe Confirmation
           this.stripeService.confirmPayment$(payload)
-            .subscribe({
-              next: result => {
-                this.isLoading = false;
-                if (result.success) {
-                  this.resetForm();
-                  this.closeStripeDialog();
-                  this.alert.success('Paiement réussi');
-                } else {
-                  this.alert.error('Une erreur est survenue');
-                }
+            .subscribe(result => {
+              this.isLoading = false;
+
+              if (result.success) {
+                this.alert.success('Paiement réussi');
+                this.showStripeDialog = false;
+              } else {
+                this.alert.error('Une erreur est survenue');
               }
             });
-        }, error: err => {
+        },
+        error: err => {
           this.isLoading = false;
           console.error(err);
-          this.alert.error('Error when paying');
+          this.alert.error('Erreur lors du paiement');
         }
       });
-
   }
+
 
   private resetForm() {
     this.infoForm.reset()
   }
 
+  submitReportForm() {
+
+  }
 }
