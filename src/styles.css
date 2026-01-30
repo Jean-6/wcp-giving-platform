@@ -23,3 +23,18 @@
 html, body {
   overflow-x: hidden;
 }
+
+
+
+/* Supprime tous les arrondis du dialog PrimeNG */
+.p-dialog,
+.p-dialog .p-dialog-header,
+.p-dialog .p-dialog-content {
+  border-radius: 0 !important;
+}
+
+/* Supprime les marges internes du contenu si nécessaire */
+.p-dialog .p-dialog-content {
+  padding: 0 !important;
+}
+

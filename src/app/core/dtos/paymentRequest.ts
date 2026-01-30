@@ -1,4 +1,4 @@
-import {BillingDetails} from './BillingDetails';
+import {BillingDetails} from './billingDetails';
 
 
 export interface PaymentRequest {

@@ -1,13 +1,15 @@
-import { Component, ElementRef, ViewChild} from '@angular/core';
-import {NgIf} from '@angular/common';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {NgClass, NgIf} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MyStripeService} from './service/my-stripe-service';
 import {AlertService} from '../../core/services/alert-service';
 import {Dialog} from 'primeng/dialog';
 import {PaymentService} from '../../core/services/payment-service';
-import {PaymentRequest} from '../../core/dtos/PaymentRequest';
+import {PaymentRequest} from '../../core/dtos/paymentRequest';
 import {GoogleMapsLoaderService} from '../../core/services/google-maps-loader-service';
 import {DatePicker} from 'primeng/datepicker';
+import {minMaxDateValidator} from '../../shared/validator/min-max-date.validator';
+
 
 declare const google: any;
 
@@ -24,15 +26,17 @@ declare const google: any;
   styleUrl: './donation.css',
   standalone: true
 })
-export class Donation {
+export class Donation implements OnInit{
 
   infoForm!: FormGroup;
+  paymentMethod: PaymentMethod | null = null;
+
   selectedPanel: 'support' | 'facture' | 'update' | 'stripe' | null = null;
   showStripeDialog = false;
   private cardMounted = false;
   isLoading = false;
-  start: any;
-  end: any;
+  minDate!: Date;
+  maxDate!: Date;
   reportForm!: FormGroup;
 
   @ViewChild('cardNumberEl') cardNumberEl!: ElementRef;
@@ -57,9 +61,11 @@ export class Donation {
     });
 
     this.reportForm = this.fb.group({
-      start:[],
-      end:[]
-    })
+      email: ['', [Validators.required, Validators.email]],
+      minDate:['', [Validators.required]],
+      maxDate:['', [Validators.required]],
+    },
+      { validators: minMaxDateValidator})
   }
 
 
@@ -86,6 +92,11 @@ export class Donation {
     });
   }
 
+  selectPaymentMethod(method: PaymentMethod) {
+    this.paymentMethod = method;
+  }
+
+
   openPanel(type: 'support' | 'facture' | 'update') {
     this.selectedPanel = type;
   }
@@ -102,12 +113,16 @@ export class Donation {
       this.infoForm.markAllAsTouched();
       return;
     }
-    console.log('Formulaire valide :', this.infoForm.value);
-    this.cardMounted = false;
-    this.showStripeDialog = true;
-
+    if(this.paymentMethod === 'STRIPE_CHECKOUT'){
+      console.log("submit: "+ "STRIPE_CHECKOUT")
+      this.redirectToCheckout()
+    }
+    if(this.paymentMethod === 'CARD_DIRECT'){
+      console.log("submit: "+ "CARD_DIRECT")
+      this.cardMounted = false;
+      this.showStripeDialog = true;
+    }
     this.isLoading = false;
-
   }
 
   /**
@@ -131,17 +146,45 @@ export class Donation {
    * Called by p-dialog (onHide)
    */
 
-  closeStripeDialog() {
-    this.showStripeDialog = false
-    this.isLoading = false
-  }
 
   onStripeDialogHide() {
     this.stripeService.unmountAll();
   }
 
 
-  pay() {
+  redirectToCheckout() {
+
+   // if (this.isLoading) return;
+    this.isLoading = true;
+
+    const payload: PaymentRequest = {
+      amount: this.infoForm.value.amount * 100,
+      currency: 'eur',
+      reason: this.infoForm.value.reason,
+      billingDetails: {
+        firstname: this.infoForm.value.firstname,
+        lastname: this.infoForm.value.lastname,
+        email: this.infoForm.value.email,
+        phone: this.infoForm.value.phone,
+        address: this.googleMapsLoader.parseAdress(this.infoForm.value.address)
+      }
+    };
+
+    console.log("redirectToCheckout: {}", payload)
+
+    this.paymentService.createCheckoutSession(payload)
+      .subscribe({
+        next: ({ url }) => {
+          window.location.href = url; // Redirect to stripe
+        },
+        error: () => {
+          this.isLoading = false;
+          this.alert.error('Erreur lors de la redirection Stripe');
+        }
+      });
+
+  }
+  payDirect() {
 
     if (this.isLoading) return;
     this.isLoading = true;
@@ -164,7 +207,7 @@ export class Donation {
     };
 
     // Sending backend
-    this.paymentService.createPayment(payload)
+    this.paymentService.createPaymentIntent(payload)
       .subscribe({
         next: ({ clientSecret }) => {
 
@@ -199,4 +242,19 @@ export class Donation {
   submitReportForm() {
 
   }
+
+  ngOnInit(): void {
+    this.setYearLimits();
+  }
+
+  setYearLimits(){
+
+    const today = new Date();
+    const year = today.getFullYear();
+
+    this.minDate = new Date(year,0,1);
+    this.maxDate = today
+
+  }
+
 }
