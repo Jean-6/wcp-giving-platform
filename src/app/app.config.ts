@@ -4,12 +4,17 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import {MessageService} from 'primeng/api';
 import {ToastModule} from 'primeng/toast';
-
 import {providePrimeNG} from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {BasicAuthInterceptor} from './core/interceptors/basic-auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS, useClass: BasicAuthInterceptor,multi: true
+    },
+    provideHttpClient(withInterceptorsFromDi()),
     MessageService,
     ToastModule,
     provideAnimationsAsync(),
