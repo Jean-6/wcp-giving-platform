@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "wcp-giving-platform": {
+    "wcip-giving-platform": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "wcp-giving-platform:build:production"
+              "buildTarget": "wcip-giving-platform:build:production"
             },
             "development": {
-              "buildTarget": "wcp-giving-platform:build:development"
+              "buildTarget": "wcip-giving-platform:build:development"
             }
           },
           "defaultConfiguration": "development"

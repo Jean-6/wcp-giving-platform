@@ -10,5 +10,5 @@ import {Toast} from 'primeng/toast';
   styleUrl: './app.css'
 })
 export class App{
-  protected title = 'wcp-giving-platform';
+  protected title = 'wcip-giving-platform';
 }
