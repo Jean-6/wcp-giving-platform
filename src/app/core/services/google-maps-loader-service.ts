@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
 import {environment} from '../../../environments/environment';
+import * as countries from "i18n-iso-countries";
+import frLocale from "i18n-iso-countries/langs/fr.json";
+
+countries.registerLocale(frLocale);
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +14,7 @@ export class GoogleMapsLoaderService {
   private loaded = false;
   private loading!: Promise<void>;
   apiKey = environment.googleMapsApiKey;
+
 
   load(): Promise<void> {
     if (this.loaded) return Promise.resolve();
@@ -35,7 +40,14 @@ export class GoogleMapsLoaderService {
 
   }
 
-  parseAdress(fullAdress: string){
+
+  getIso2FromCountryName(countryName: string | null): string | null {
+    if (!countryName) return null;
+    return countries.getAlpha2Code(countryName, "fr") || null;
+  }
+
+
+  parseAddress(fullAdress: string){
     if(!fullAdress){
       return {
         line1: null,
@@ -49,14 +61,20 @@ export class GoogleMapsLoaderService {
 
     const parts = fullAdress.split(',').map(p => p.trim());
 
+    const street = parts[0] || null;
+    const cityPart = parts[1] || null;
+    const countryLabel = parts[2] || null;
+
+    const iso2 = this.getIso2FromCountryName(countryLabel);
+
     return {
-      line1: parts[0] || null,
-      city: parts[1] || null,
-      country: parts[2] || null,
+      line1: street,
+      line2: null,
+      city: cityPart,
       postal_code: null,
       state: null,
-      line2: null,
+      country: iso2,
+      country_label: countryLabel
     }
   }
-
 }
