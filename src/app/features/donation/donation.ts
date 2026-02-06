@@ -1,14 +1,16 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {NgClass, NgIf} from '@angular/common';
+import { NgIf} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MyStripeService} from './service/my-stripe-service';
 import {AlertService} from '../../core/services/alert-service';
 import {Dialog} from 'primeng/dialog';
 import {PaymentService} from '../../core/services/payment-service';
-import {PaymentRequest} from '../../core/dtos/paymentRequest';
+import {PaymentIntentReq} from '../../core/dtos/paymentIntentReq';
 import {GoogleMapsLoaderService} from '../../core/services/google-maps-loader-service';
 import {DatePicker} from 'primeng/datepicker';
 import {minMaxDateValidator} from '../../shared/validator/min-max-date.validator';
+import {Router} from '@angular/router';
+import {AutoFocus} from 'primeng/autofocus';
 
 
 declare const google: any;
@@ -21,6 +23,7 @@ declare const google: any;
     Dialog,
     FormsModule,
     DatePicker,
+    AutoFocus,
   ],
   templateUrl: './donation.html',
   styleUrl: './donation.css',
@@ -29,7 +32,7 @@ declare const google: any;
 export class Donation implements OnInit{
 
   infoForm!: FormGroup;
-  paymentMethod: PaymentMethod | null = null;
+  paymentMethod: PaymentMethod ='CARD_DIRECT';
 
   selectedPanel: 'support' | 'facture' | 'update' | 'stripe' | null = null;
   showStripeDialog = false;
@@ -48,7 +51,8 @@ export class Donation implements OnInit{
               private stripeService: MyStripeService,
               private paymentService: PaymentService,
               private alert: AlertService,
-              private googleMapsLoader: GoogleMapsLoaderService
+              private googleMapsLoader: GoogleMapsLoaderService,
+              private router: Router
   ) {
     this.infoForm = this.fb.group({
       amount: ['', [Validators.required, Validators.min(1), Validators.pattern(/^[0-9]+$/)]],
@@ -107,6 +111,12 @@ export class Donation implements OnInit{
 
   submit() {
 
+
+    if(!this.paymentMethod){
+      this.alert.warn("Merci de selection un mode de paiement")
+      return;
+    }
+
     this.isLoading = true;
 
     if (this.infoForm.invalid) {
@@ -153,11 +163,9 @@ export class Donation implements OnInit{
 
 
   redirectToCheckout() {
-
-   // if (this.isLoading) return;
     this.isLoading = true;
 
-    const payload: PaymentRequest = {
+    const payload: PaymentIntentReq = {
       amount: this.infoForm.value.amount * 100,
       currency: 'eur',
       reason: this.infoForm.value.reason,
@@ -166,7 +174,7 @@ export class Donation implements OnInit{
         lastname: this.infoForm.value.lastname,
         email: this.infoForm.value.email,
         phone: this.infoForm.value.phone,
-        address: this.googleMapsLoader.parseAdress(this.infoForm.value.address)
+        address: this.googleMapsLoader.parseAddress(this.infoForm.value.address)
       }
     };
 
@@ -190,9 +198,9 @@ export class Donation implements OnInit{
     this.isLoading = true;
 
     const amount = this.infoForm.value.amount * 100;
-    const adressParsed = this.googleMapsLoader.parseAdress(this.infoForm.value.address)
+    const addressParsed = this.googleMapsLoader.parseAddress(this.infoForm.value.address)
 
-    const payload: PaymentRequest = {
+    const payload: PaymentIntentReq = {
       clientSecret: undefined,
       amount: amount,
       currency: 'eur',
@@ -202,9 +210,11 @@ export class Donation implements OnInit{
         lastname: this.infoForm.value.lastname,
         email: this.infoForm.value.email,
         phone: this.infoForm.value.phone,
-        address: adressParsed
+        address: addressParsed
       }
     };
+
+    console.log("payDirect: {}", payload)
 
     // Sending backend
     this.paymentService.createPaymentIntent(payload)
@@ -218,11 +228,23 @@ export class Donation implements OnInit{
             .subscribe(result => {
               this.isLoading = false;
 
+              const paymentIntentId = result.paymentIntentId;
+
               if (result.success) {
                 this.alert.success('Paiement réussi');
                 this.showStripeDialog = false;
+                this.resetForm()
+                this.router.navigate(['/success'],
+                  {
+                    queryParams: { payment_intent: paymentIntentId }
+                  })
+
               } else {
                 this.alert.error('Une erreur est survenue');
+                this.router.navigate(['/cancel'],
+                  {
+                    queryParams: { payment_intent: paymentIntentId }
+                  })
               }
             });
         },

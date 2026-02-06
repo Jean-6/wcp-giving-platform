@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {PaymentRequest} from '../../../core/dtos/paymentRequest';
+import {PaymentIntentReq} from '../../../core/dtos/paymentIntentReq';
 import {
   loadStripe,
   Stripe,
@@ -115,14 +115,17 @@ export class MyStripeService {
 
 
 
-  confirmPayment$(payload: PaymentRequest): Observable<{ success: boolean; error?: string }> {
+  confirmPayment$(payload: PaymentIntentReq): Observable<{
+    success: boolean;
+    paymentIntentId: string | null;
+    error: string | null }> {
 
     if (!this.mounted || !this.cardNumber) {
-      return of({ success: false, error: 'Stripe card not mounted' });
+      return of({ success: false, paymentIntentId:null, error: 'Stripe card not mounted' });
     }
 
     if(!payload.clientSecret){
-      return of({ success: false, error: 'Client secret manquant' });
+      return of({ success: false, paymentIntentId: null, error: 'Client secret manquant' });
     }
     return from(
       this.stripe.confirmCardPayment(payload.clientSecret, {
@@ -145,17 +148,31 @@ export class MyStripeService {
       })
     ).pipe(
       map(result => {
+        console.log("result :, {} ",result)
+
+        const paymentIntentId =
+          result.paymentIntent?.id ||
+          result.error?.payment_intent?.id ||
+          null;
+
         if (result.error) {
           return {
             success: false,
-            error: result.error.message
+            paymentIntentId,
+            error: result.error.message ?? null
           };
-        }
+      }
 
-        return { success: true };
+        return {
+          success: true,
+          paymentIntentId,
+          error: null
+        };
       })
     );
   }
+
+
 
 
   /**

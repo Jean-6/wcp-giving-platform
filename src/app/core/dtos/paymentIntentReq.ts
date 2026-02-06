@@ -1,7 +1,7 @@
 import {BillingDetails} from './billingDetails';
 
 
-export interface PaymentRequest {
+export interface PaymentIntentReq {
   clientSecret?: string;
   amount: number;
   currency: string;

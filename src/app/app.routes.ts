@@ -10,11 +10,11 @@ export const routes: Routes = [
     component: Donation
   },
   {
-    path: 'payment/success',
+    path: 'success',
     component: PaymentSuccess,
   },
   {
-    path:'payment/cancel',
+    path:'cancel',
     component: PaymentCancel,
   },
   {
