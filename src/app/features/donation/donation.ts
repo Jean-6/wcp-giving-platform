@@ -123,6 +123,11 @@ export class Donation implements OnInit{
       this.infoForm.markAllAsTouched();
       return;
     }
+
+
+    (document.activeElement as HTMLElement)?.blur();
+
+
     if(this.paymentMethod === 'STRIPE_CHECKOUT'){
       console.log("submit: "+ "STRIPE_CHECKOUT")
       this.redirectToCheckout()
@@ -141,13 +146,17 @@ export class Donation implements OnInit{
 
   onStripeDialogOpen() {
 
+    if (this.cardMounted) return;
+
     this.isLoading = true;
+
       this.stripeService.init$().subscribe(() => {
         this.stripeService.mountAll(
           this.cardNumberEl.nativeElement,
           this.cardExpiryEl.nativeElement,
           this.cardCvcEl.nativeElement
         );
+        this.cardMounted = true;
         this.isLoading = false
       });
   }
@@ -158,7 +167,7 @@ export class Donation implements OnInit{
 
 
   onStripeDialogHide() {
-    this.stripeService.unmountAll();
+    //this.stripeService.unmountAll();
   }
 
 
